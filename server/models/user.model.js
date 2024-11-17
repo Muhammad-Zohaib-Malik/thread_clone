@@ -1,0 +1,58 @@
+import mongoose from 'mongoose';
+
+const userSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+    lowercase: true,
+    minlength: 3
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+    lowercase: true
+  },
+  password: {
+    type: String,
+    required: true,
+    minlength: 6,
+    select: false,
+    trim: true
+  },
+  profilePic: {
+    type: String,
+    default: ""
+  },
+  bio: {
+    type: String,
+    default: "",
+  },
+  followers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  followings: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
+  threads: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Post'
+  }],
+  replies: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Comment'
+  }],
+  reposts:[{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Post'
+  }],
+}, {
+  timestamps: true
+});
+
+export const User=mongoose.model("User",userSchema)
