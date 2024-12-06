@@ -11,15 +11,30 @@ const postSchema = new mongoose.Schema({
     maxLength: 500,
     required: true
   },  
-  media:{
+  img:{
     type:String
-  },
-  public_id:{
-   type:String
   },
   likes: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
+  }],
+  replies:[{
+    userId:{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required:true
+    },
+    text:{
+      type:String,
+      required:true
+    },
+    userProfilePic:{
+      type:String
+    },
+    username:{
+      type:String
+    }
+
   }],
   comments: [
     {
