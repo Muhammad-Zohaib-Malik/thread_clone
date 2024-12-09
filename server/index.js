@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import userRouter from './routes/user.route.js';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
@@ -15,11 +16,9 @@ const port = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser())
 
-// Test route
-app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to the Express server!' });
-});
+
 
 app.use('/api/v1/users', userRouter);
 
