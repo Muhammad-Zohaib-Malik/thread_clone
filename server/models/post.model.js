@@ -34,7 +34,6 @@ const postSchema = new mongoose.Schema({
     username:{
       type:String
     }
-
   }],
   comments: [
     {
