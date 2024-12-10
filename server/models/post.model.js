@@ -11,8 +11,12 @@ const postSchema = new mongoose.Schema({
     maxLength: 500,
     required: true
   },  
-  img:{
-    type:String
+  image:{
+    type:String,
+    default:""
+  },
+  imageId:{
+    type:String,
   },
   likes: [{
     type: mongoose.Schema.Types.ObjectId,
