@@ -178,3 +178,46 @@ export const followUnFollowUser = async (req, res) => {
 
 }
 
+export const updateUser = async (req, res) => {
+  const { name, email, username, password, profilePic, bio } = req.body
+  const userId = req.user._id
+  try {
+    let user = await User.findById(userId)
+    if (!user) return  res.status(400).json({
+      success: false,
+      message: "user not found"
+    });
+   
+    if(req.params.id!==userId.toString()) return res.status(400).json({
+      success: false,
+      message: "You can't update other user profile"
+    });
+
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10)
+      user.password = hashedPassword
+    }
+
+    user.name = name || user.name
+    user.email = email || user.email
+    user.username = username || user.username
+    user.profilePic = profilePic || user.profilePic
+    user.bio = bio || user.bio
+
+    user = await user.save()
+
+    res.status(201).json({
+      success: true,
+      message: "Profile Updated Successfully",
+      user
+    });
+
+
+  } catch (error) {
+    console.error("Error in UpdatingUser: ", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+}
