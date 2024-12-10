@@ -7,8 +7,7 @@ export const registerUser = async (req, res) => {
     const { name, username, email, password } = req.body;
 
     // Check for empty fields
-    if (!name || !username || !email || !password) 
-      {
+    if (!name || !username || !email || !password) {
       return res.status(400).json({
         success: false,
         message: "Please fill all required fields"
@@ -75,17 +74,17 @@ export const loginUser = async (req, res) => {
     const { username, password } = req.body;
     const user = await User.findOne({ username })
 
-     if (!user.password) {
+    if (!user.password) {
       console.log("Password field is missing for user:", username);
       return res.status(400).json({
         success: false,
         message: "Invalid user credentials"
       });
     }
-  
-    const isPasswordCorrect = await bcrypt.compare(password, user?.password || "" )
-   
-    
+
+    const isPasswordCorrect = await bcrypt.compare(password, user?.password || "")
+
+
     if (!user || !isPasswordCorrect) return res.status(400).json({
       success: false,
       message: "Invalid user or password"
@@ -112,21 +111,70 @@ export const loginUser = async (req, res) => {
 
 }
 
-export const logoutUser=async(_,res)=>{
+export const logoutUser = async (_, res) => {
   try {
-    res.cookie("jwt","",{maxAge:1})
+    res.cookie("jwt", "", { maxAge: 1 })
     res.status(201).json({
-        success: true,
-        message: "User Logout Successfully"
-      });
-      
+      success: true,
+      message: "User Logout Successfully"
+    });
+
   } catch (error) {
-     console.error("Error in logoutUser: ", error.message);
+    console.error("Error in logoutUser: ", error.message);
     res.status(500).json({
       success: false,
       message: "Internal server error"
     });
 
   }
+}
+
+export const followUnFollowUser = async (req, res) => {
+  try {
+    const { id } = req.params
+    const userToModify = await User.findById(id)
+    const currentUser = await User.findById(req.user._id)
+    console.log(req.user._id)
+
+
+    if (!userToModify || !currentUser) return res.status(400).json({
+      success: false,
+      message: "User not found"
+    });
+
+    if (id === req.user._id.toString()) return res.status(400).json({
+      success: false,
+      message: "You can't follow/unfollow yourself"
+    });
+
+    const isFollowing = currentUser.followings.includes(id)
+    if (isFollowing) {
+      //unfollow user
+      await User.findByIdAndUpdate(req.user._id, { $pull: { followings: id } })
+      await User.findByIdAndUpdate(id, { $pull: { followers: req.user._id } })
+      res.status(201).json({
+        success: true,
+        message: "User unfollowed Successfully"
+      });
+    }
+    else {
+      //follow user
+      await User.findByIdAndUpdate(req.user._id, { $push: { followings: id } })
+      await User.findByIdAndUpdate(id, { $push: { followers: req.user._id } })
+      res.status(201).json({
+        success: true,
+        message: "User followed Successfully"
+      });
+    }
+  }
+  catch (error) {
+
+    console.error("Error in followed: ", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+
 }
 
