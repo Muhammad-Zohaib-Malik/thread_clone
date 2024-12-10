@@ -183,12 +183,12 @@ export const updateUser = async (req, res) => {
   const userId = req.user._id
   try {
     let user = await User.findById(userId)
-    if (!user) return  res.status(400).json({
+    if (!user) return res.status(400).json({
       success: false,
       message: "user not found"
     });
-   
-    if(req.params.id!==userId.toString()) return res.status(400).json({
+
+    if (req.params.id !== userId.toString()) return res.status(400).json({
       success: false,
       message: "You can't update other user profile"
     });
@@ -220,4 +220,28 @@ export const updateUser = async (req, res) => {
       message: "Internal server error"
     });
   }
+}
+
+export const getUserProfile = async (req, res) => {
+  try {
+    const { username } = req.params
+    const user = await User.findOne({username}).select("-password -updatedAt")
+    if (!user) return res.status(400).json({
+      success: false,
+      message: "user not found"
+    });
+    res.status(201).json({
+      success: true,
+      message: "user found",
+      user
+    });
+  } catch (error) {
+    console.error("Error in getUserProfile: ", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+
+
 }

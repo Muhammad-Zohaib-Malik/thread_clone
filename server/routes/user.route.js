@@ -1,10 +1,11 @@
 import express from 'express'
-import { followUnFollowUser, loginUser, logoutUser, registerUser, updateUser } from '../controllers/user.controllers.js'
+import { followUnFollowUser, getUserProfile, loginUser, logoutUser, registerUser, updateUser } from '../controllers/user.controllers.js'
 import { protectRoute } from '../middleware/protectRoute.js'
 
 
 const userRouter=express.Router()
 
+userRouter.get("/profile/:username",protectRoute,getUserProfile)
 userRouter.post("/register",registerUser)
 userRouter.post("/login",loginUser)
 userRouter.post("/logout",logoutUser)
