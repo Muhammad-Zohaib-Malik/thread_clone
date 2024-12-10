@@ -6,7 +6,7 @@ export const protectRoute=async(req,res,next)=>{
     const token=req.cookies.jwt
     if(!token)
     {
-      res.status(500).json({
+     return  res.status(500).json({
       success: false,
       message: "Unauthorized"
     });
