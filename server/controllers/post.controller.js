@@ -1,3 +1,4 @@
+import { deleteImageFromCloudinary } from '../helper/deleteImage.js';
 import { uploadImage } from '../helper/uploadImage.js';
 import { Post } from '../models/post.model.js';
 import { User } from '../models/user.model.js';
@@ -86,12 +87,47 @@ export const getPost=async(req,res)=>{
 
   } catch (error) {
     
-    console.error("Error in creating a Post: ", error.message);
+    console.error("Error in geting a Post: ", error.message);
     res.status(500).json({
       success: false,
       message: "Internal server error"
     });
 
+    
+  }
+}
+
+export const deletePost=async(req,res)=>{
+  try {
+    const post=await Post.findById(req.params.id)
+
+    if(!post) return res.status(400).json({
+      success: false,
+      message: "post not found"
+    });
+
+    if(post.postedBy.toString()!==req.user._id.toString()){
+      res.status(400).json({
+      success: false,
+      message: "you can't delete another user post"
+    });
+    }
+
+    await Post.findByIdAndDelete(req.params.id)
+    await deleteImageFromCloudinary(post.imageId)
+
+    res.status(201).json({
+      success: true,
+      message: "Post deleted successfully"
+    });
+
+    
+  } catch (error) {
+    console.error("Error in deleting a Post: ", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
     
   }
 }
