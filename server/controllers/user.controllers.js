@@ -7,7 +7,8 @@ export const registerUser = async (req, res) => {
     const { name, username, email, password } = req.body;
 
     // Check for empty fields
-    if (!name || !username || !email || !password) {
+    if (!name || !username || !email || !password) 
+      {
       return res.status(400).json({
         success: false,
         message: "Please fill all required fields"
@@ -111,7 +112,7 @@ export const loginUser = async (req, res) => {
 
 }
 
-export const logoutUser=async(req,res)=>{
+export const logoutUser=async(_,res)=>{
   try {
     res.cookie("jwt","",{maxAge:1})
     res.status(201).json({
@@ -128,3 +129,4 @@ export const logoutUser=async(req,res)=>{
 
   }
 }
+
