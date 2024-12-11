@@ -33,19 +33,13 @@ const postSchema = new mongoose.Schema({
       type:String,
       required:true
     },
-    userProfilePic:{
+    profilePic:{
       type:String
     },
     username:{
       type:String
     }
   }],
-  comments: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User"
-    }
-  ]
 }, {
   timestamps: true
 });

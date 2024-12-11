@@ -173,4 +173,46 @@ export const likeUnlikePost = async (req, res) => {
   }
 }
 
+export const replyToPost=async(req,res)=>{
+  try {
+    const {text}=req.body
+    const postId=req.params.id
+    const userId=req.user._id
+    const username=req.user.username
+    const profilePic=req.user.profilePic
+
+    if(!text) return res.status(400).json({
+      success: false,
+      message: "text field is required"
+    });
+
+     const post = await Post.findById(postId)
+
+    if (!post) return res.status(400).json({
+      success: false,
+      message: "post not found"
+    });
+
+    const reply={userId,text,profilePic,username}
+
+    post.replies.push(reply)
+    await post.save()
+
+    res.status(201).json({
+        success: true,
+        message: "Reply added successfully"
+      });
+
+  } catch (error) {
+    console.error("Error in like a Post: ", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+    
+  }
+}
+
+
+
 
