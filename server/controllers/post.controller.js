@@ -213,6 +213,30 @@ export const replyToPost=async(req,res)=>{
   }
 }
 
+export const getFeedPosts=async(req,res)=>{
+  try {
+    const userId=req.user._id
+    const user=await User.findById(userId)
+    if(!user) return res.status(400).json({
+      success: false,
+      message: "user not found"
+    });
 
+    const following=user.followings
+    const feedPosts=await Post.find({postedBy:{$in:following}}).sort({createdAt:-1})
+    res.status(201).json({
+      success: true,
+      message: "feed Posts",
+      feedPosts
+    });   
+  } catch (error) {
+    console.error("Error in getting post feed: ", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+    
+  }
+}
 
 
