@@ -33,7 +33,7 @@ export const createPost = async (req, res) => {
     });
 
 
-     // Initialize variables for image upload
+    // Initialize variables for image upload
     let secure_url = "";
     let public_id = "";
 
@@ -71,10 +71,10 @@ export const createPost = async (req, res) => {
 }
 
 
-export const getPost=async(req,res)=>{
+export const getPost = async (req, res) => {
   try {
-    const post=await Post.findById(req.params.id)
-    if(!post) return res.status(400).json({
+    const post = await Post.findById(req.params.id)
+    if (!post) return res.status(400).json({
       success: false,
       message: "post not found"
     });
@@ -86,31 +86,31 @@ export const getPost=async(req,res)=>{
     });
 
   } catch (error) {
-    
+
     console.error("Error in geting a Post: ", error.message);
     res.status(500).json({
       success: false,
       message: "Internal server error"
     });
 
-    
+
   }
 }
 
-export const deletePost=async(req,res)=>{
+export const deletePost = async (req, res) => {
   try {
-    const post=await Post.findById(req.params.id)
+    const post = await Post.findById(req.params.id)
 
-    if(!post) return res.status(400).json({
+    if (!post) return res.status(400).json({
       success: false,
       message: "post not found"
     });
 
-    if(post.postedBy.toString()!==req.user._id.toString()){
+    if (post.postedBy.toString() !== req.user._id.toString()) {
       res.status(400).json({
-      success: false,
-      message: "you can't delete another user post"
-    });
+        success: false,
+        message: "you can't delete another user post"
+      });
     }
 
     await Post.findByIdAndDelete(req.params.id)
@@ -121,13 +121,56 @@ export const deletePost=async(req,res)=>{
       message: "Post deleted successfully"
     });
 
-    
+
   } catch (error) {
     console.error("Error in deleting a Post: ", error.message);
     res.status(500).json({
       success: false,
       message: "Internal server error"
     });
-    
+
   }
 }
+
+export const likeUnlikePost = async (req, res) => {
+  try {
+    const { id: postId } = req.params
+    const userId = req.user._id
+
+    const post = await Post.findById(postId)
+
+    if (!post) return res.status(400).json({
+      success: false,
+      message: "post not found"
+    });
+
+    const userLikedPost = post.likes.includes(userId)
+
+    if (userLikedPost) {
+      //unlike
+      await Post.updateOne({_id:postId}, { $pull: { likes: userId } })
+      res.status(201).json({
+        success: true,
+        message: "post unliked successfully"
+      });
+    }
+    else {
+      //like
+     post.likes.push(userId)
+     await post.save()
+      res.status(201).json({
+        success: true,
+        message: "post liked successfully"
+      });
+
+    }
+  } catch (error) {
+    console.error("Error in like a Post: ", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+}
+
+
