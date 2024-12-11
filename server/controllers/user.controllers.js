@@ -134,7 +134,7 @@ export const followUnFollowUser = async (req, res) => {
     const { id } = req.params
     const userToModify = await User.findById(id)
     const currentUser = await User.findById(req.user._id)
-    console.log(req.user._id)
+    
 
 
     if (!userToModify || !currentUser) return res.status(400).json({
