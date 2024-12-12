@@ -44,6 +44,10 @@ name:{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   }],
+  isFrozen: {
+			type: Boolean,
+			default: false,
+		},
 }, {
   timestamps: true
 });
