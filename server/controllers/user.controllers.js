@@ -90,6 +90,12 @@ export const loginUser = async (req, res) => {
       message: "Invalid user or password"
     });
 
+    if(user.isFrozen)
+    {
+      user.isFrozen=false
+      await user.save()
+    }
+
     generateTokenAndSetCookie(user._id, res)
 
     res.status(201).json({
@@ -245,3 +251,29 @@ export const getUserProfile = async (req, res) => {
 
 
 }
+
+export const freezeUser=async(req,res)=>{
+  try {
+    const user=await User.findById(req.user._id)
+    if(!user) return res.status(400).json({
+      success: false,
+      message: "user not found"
+    });
+
+    user.isFrozen=true
+    await user.save()
+    res.status(201).json({
+      success: true,
+      message: "Account Frozen successfully"
+    });
+
+    
+  } catch (error) {
+     console.error("Error in getUserProfile: ", error.message);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error"
+    });
+  }
+}
+
