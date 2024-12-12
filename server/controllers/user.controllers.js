@@ -255,7 +255,7 @@ export const getUserProfile = async (req, res) => {
 export const freezeUser=async(req,res)=>{
   try {
     const user=await User.findById(req.user._id)
-    if(!user) return res.status(400).json({
+    if(!user) return res.status(404).json({
       success: false,
       message: "user not found"
     });
@@ -269,7 +269,7 @@ export const freezeUser=async(req,res)=>{
 
     
   } catch (error) {
-     console.error("Error in getUserProfile: ", error.message);
+     console.error("Error in freeze: ", error.message);
     res.status(500).json({
       success: false,
       message: "Internal server error"
